@@ -1,0 +1,29 @@
+name: Amul Stock Checker
+
+# Runs every 15 minutes (adjust the cron expression if you need a different interval)
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  check-stock:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v4
+
+      # Set up Python (no external packages needed for the script)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Run the stock checker script
+      - name: Run stock checker
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          # Export the env var name expected by the script
+          export NTFY_TOPIC="${NTFY_TOPIC}"
+          python3 stock_notifier.py
