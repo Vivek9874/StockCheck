@@ -28,7 +28,13 @@ logging.basicConfig(
 
 def fetch_page(url: str) -> str:
     """Download the page and return it as a UTF‑8 string."""
-    with request.urlopen(url, timeout=15) as resp:
+    req = request.Request(url, headers={
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+        ),
+    })
+    with request.urlopen(req, timeout=15) as resp:
         return resp.read().decode("utf-8", errors="replace")
 
 def is_in_stock(html: str) -> bool:

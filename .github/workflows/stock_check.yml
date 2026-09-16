@@ -23,7 +23,7 @@ jobs:
       # Run the stock checker script
       - name: Run stock checker
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOPIC: ${{ secrets.NTFY_SECRET }}
         run: |
           # Export the env var name expected by the script
           export NTFY_TOPIC="${NTFY_TOPIC}"
