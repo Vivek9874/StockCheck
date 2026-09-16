@@ -60,21 +60,38 @@ def send_ntfy(message: str) -> None:
         if resp.status != 200:
             raise RuntimeError(f"ntfy responded with status {resp.status}")
 
-def main() -> None:
+def main(manual: bool = False) -> None:
     try:
+        print(f"🔍 Checking stock for: {PRODUCT_URL}")
         html = fetch_page(PRODUCT_URL)
-        if is_in_stock(html):
+        in_stock = is_in_stock(html)
+
+        if in_stock:
             message = (
                 "🥛 *Amul High‑Protein Rose Lassi* is back in stock!\n"
                 f"🛒 Order now: {PRODUCT_URL}\n"
                 f"📅 Checked at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
             )
             send_ntfy(message)
+            print("✅ Product IN STOCK – notification sent")
             logging.info("Product IN STOCK – notification sent")
         else:
+            print("❌ Product still out of stock")
             logging.info("Product still out of stock")
+
+        if manual:
+            status = "✅ IN STOCK" if in_stock else "❌ Out of Stock"
+            manual_msg = (
+                f"🔔 Manual check result: {status}\n"
+                f"🛒 {PRODUCT_URL}\n"
+                f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            )
+            if not in_stock:  # avoid duplicate notification when in stock
+                send_ntfy(manual_msg)
+                print("📨 Manual trigger notification sent")
     except Exception as e:
         logging.exception(f"Error while checking stock: {e}")
+        print(f"💥 Error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
@@ -84,4 +101,5 @@ if __name__ == "__main__":
     if env_topic:
         NTFY_TOPIC = env_topic
         NTFY_URL = f"https://ntfy.sh/{NTFY_TOPIC}"
-    main()
+    is_manual = os.getenv("MANUAL_TRIGGER", "").lower() == "true"
+    main(manual=is_manual)

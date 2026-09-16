@@ -24,6 +24,7 @@ jobs:
       - name: Run stock checker
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_SECRET }}
+          MANUAL_TRIGGER: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           # Export the env var name expected by the script
           export NTFY_TOPIC="${NTFY_TOPIC}"
