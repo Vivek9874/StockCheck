@@ -76,7 +76,6 @@ if __name__ == "__main__":
     import os
     env_topic = os.getenv("NTFY_TOPIC")
     if env_topic:
-        global NTFY_TOPIC, NTFY_URL
         NTFY_TOPIC = env_topic
         NTFY_URL = f"https://ntfy.sh/{NTFY_TOPIC}"
     main()
